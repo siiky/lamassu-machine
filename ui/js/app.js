@@ -287,6 +287,13 @@ function processData(data) {
       setState('security_code');
       break;
     case 'scanned':
+      if (data.billValidator === 'HCM2') {
+        $('.blocked-customer-top').hide();
+        setState('insert_bills_hcm2');
+        break;
+      }
+      $('.js-send-crypto-disable').hide();
+      $('.js-send-crypto-enable').show();
       setState('insert_bills');
       break;
     case 'acceptingFirstBill':
@@ -297,6 +304,10 @@ function processData(data) {
     case 'acceptingBills':
       $('.blocked-customer-top').hide();
       setState('insert_more_bills');
+      break;
+    case 'acceptingHcm2Bills':
+      $('.blocked-customer-top').hide();
+      setState('insert_bills_hcm2');
       break;
     case 'acceptingBill':
       setAccepting(true);
@@ -767,6 +778,7 @@ $(document).ready(function () {
     buttonPressed('wifiConnect', { pass: pass, ssid: ssid, rawSsid: rawSsid });
   });
 
+  var hcm2Continue = document.getElementById('hcm2-continue');
   var sendCoinsButton = document.getElementById('send-coins');
   var sendCoinsButton2 = document.getElementById('send-only-send-coins');
   touchEvent(sendCoinsButton, function () {
@@ -777,6 +789,16 @@ $(document).ready(function () {
   touchEvent(sendCoinsButton2, function () {
     setState('sending_coins');
     buttonPressed('sendCoins');
+  });
+
+  touchEvent(sendCoinsButton2, function () {
+    setState('sending_coins');
+    buttonPressed('sendCoins');
+  });
+
+  touchEvent(hcm2Continue, function () {
+    setState('hcm2_continue');
+    buttonPressed('hcm2Continue');
   });
 
   var blockedCustomerOk = document.getElementById('blocked-customer-ok');
@@ -2100,7 +2122,9 @@ function calculateAspectRatio() {
   var aspectRatioPt1 = w / r;
   var aspectRatioPt2 = h / r;
 
-  if (aspectRatioPt1 === 8 && aspectRatioPt2 === 5) {
+  if (aspectRatioPt1 < aspectRatioPt2) {
+    aspectRatio = '9:16';
+  } else if (aspectRatioPt1 === 8 && aspectRatioPt2 === 5) {
     aspectRatio = '16:10';
   } else if (aspectRatioPt1 === 16 && aspectRatioPt2 === 9) {
     aspectRatio = '16:9';
