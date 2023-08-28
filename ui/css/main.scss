@@ -415,7 +415,12 @@ footer {
   margin-top: 1vh;
 }
 
-.sintra .only-sintra, .douro .only-douro, .gaia .only-gaia, .tejo .only-tejo {
+.sintra .only-sintra,
+.douro .only-douro,
+.gaia .only-gaia,
+.tejo .only-tejo,
+.aveiro .only-aveiro,
+.gmuk1 .only-gmuk1 {
   display: block;
 }
 
@@ -881,13 +886,13 @@ footer {
   margin-top: -6vh;
 }
 
-.insert_bills_hcm2_state .secondary-side {
+.insert_first_bills_recycler_state .secondary-side, .insert_bills_recycler_state .secondary-side {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.insert_bills_hcm2_state footer {
+.insert_first_bills_recycler_state footer, .insert_bills_recycler_state footer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1405,6 +1410,11 @@ footer {
   }
 }
 
+.insert_first_bills_recycler_state footer, .insert_bills_recycler_state footer {
+  padding-left: 0;
+  padding-right: 9.4vw;
+}
+
 #networks {
   margin: auto;
   display: flex;
@@ -1879,6 +1889,10 @@ footer {
       color: $sapphire;
     }
   }
+}
+
+button[disabled] {
+  pointer-events: none;
 }
 
 @media (orientation: portrait) {

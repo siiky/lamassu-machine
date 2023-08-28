@@ -358,21 +358,37 @@ msgstr "Your coins will be sent to:"
 msgid "Continue"
 msgstr "Continue"
 
-#: On screen: insert-more-bills
-msgid "Insert another bill"
-msgstr "Insert another bill"
+#: On screen: insert-bills-recycler
+msgid "Insert another round of bills"
+msgstr "Insert another round of bills"
 
-#: On screen: insert-more-bills
+#: On screen: insert-bills-recycler
 msgid "deposited so far"
 msgstr "deposited so far"
 
-#: On screen: insert-more-bills
+#: On screen: insert-bills-recycler
 msgid "total purchased"
 msgstr "total purchased"
 
-#: On screen: insert-more-bills
+#: On screen: insert-bills-recycler
 msgid "OR"
 msgstr "OR"
+
+#: On screen: insert-bills-recycler
+msgid "Finish"
+msgstr "Finish"
+
+#: On screen: insert-first-bills-recycler
+msgid "Insert bills"
+msgstr "Insert bills"
+
+#: On screen: insert-first-bills-recycler
+msgid "Please insert your first round of bills into the machine."
+msgstr "Please insert your first round of bills into the machine."
+
+#: On screen: insert-more-bills
+msgid "Insert another bill"
+msgstr "Insert another bill"
 
 #: On screen: insert-more-bills
 msgid "Finished?"
@@ -669,6 +685,14 @@ msgstr "Maintenance Required"
 #: On screen: maintenance
 msgid "Please contact the operator."
 msgstr "Please contact the operator."
+
+#: On screen: action_required_maintenance
+msgid "After you've completed all maintenance work, please touch the following button."
+msgstr "After you've completed all maintenance work, please touch the following button."
+
+#: On screen: action_required_maintenance
+msgid "Restart machine"
+msgstr "Restart machine"
 
 #: On screen: terms
 msgid "I agree"

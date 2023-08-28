@@ -57,6 +57,7 @@ var customRequirementTextKeyboard = null;
 var customRequirementChoiceList = null;
 var viewportButtonEventsActive = null;
 var viewportEvents = {};
+var customRequirementTextKeyboardNumberOfBoxes = 2;
 
 var MUSEO = ['ca', 'cs', 'da', 'de', 'en', 'es', 'et', 'fi', 'fr', 'hr', 'hu', 'it', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sv', 'tr'];
 
@@ -209,7 +210,7 @@ function processData(data) {
   if (data.version) setVersion(data.version);
   if (data.cassettes) buildCassetteButtons(data.cassettes, NUMBER_OF_BUTTONS);
   if (data.sent && data.total) setPartialSend(data.sent, data.total);
-  if (data.readingBill) readingBill(data.readingBill);
+  if (data.readingBills) readingBills(data.readingBills);
   if (data.cryptoCode) translateCoin(data.cryptoCode);
   if (data.tx) {
     if (data.tx.cashInFee) setFixedFee(data.tx.cashInFee);else if (data.tx.cashOutFee) setFixedFee(data.tx.cashOutFee);
@@ -221,7 +222,7 @@ function processData(data) {
   if (data.hardLimit) setHardLimit(data.hardLimit);
   if (data.cryptomatModel) setCryptomatModel(data.cryptomatModel);
   if (data.areThereAvailablePromoCodes !== undefined) setAvailablePromoCodes(data.areThereAvailablePromoCodes);
-  if (data.allRates && data.ratesFiat && data.localeInfo) setRates(data.allRates, data.ratesFiat, data.localeInfo);
+  if (data.allRates && data.ratesFiat) setRates(data.allRates, data.ratesFiat);
 
   if (data.tx && data.tx.discount) setCurrentDiscount(data.tx.discount);
   if (data.receiptStatus) setReceiptPrint(data.receiptStatus, null);
@@ -232,6 +233,10 @@ function processData(data) {
     $('.js-context').hide();
     $('.js-context-' + data.context).show();
   }
+
+  var isRecycler = function isRecycler(billValidator) {
+    return billValidator === 'HCM2';
+  };
 
   switch (data.action) {
     case 'wifiList':
@@ -287,17 +292,11 @@ function processData(data) {
       setState('security_code');
       break;
     case 'scanned':
-      if (data.billValidator === 'HCM2') {
-        $('.blocked-customer-top').hide();
-        setState('insert_bills_hcm2');
-        break;
-      }
       $('.js-send-crypto-disable').hide();
       $('.js-send-crypto-enable').show();
-      setState('insert_bills');
+      isRecycler(data.billValidator) ? setState('insert_first_bills_recycler') : setState('insert_bills');
       break;
     case 'acceptingFirstBill':
-      $('.js-send-crypto-disable').hide();
       $('.js-send-crypto-enable').show();
       setState('insert_bills');
       break;
@@ -305,9 +304,18 @@ function processData(data) {
       $('.blocked-customer-top').hide();
       setState('insert_more_bills');
       break;
-    case 'acceptingHcm2Bills':
+    case 'acceptingFirstRecyclerBills':
+      $('.js-continue-crypto-enable').show();
+      $('.js-send-crypto-enable').show();
+      setState('insert_first_bills_recycler');
+      break;
+    case 'recyclerContinue':
+      disableRecyclerBillButtons();
+      break;
+    case 'acceptingRecyclerBills':
+      enableRecyclerBillButtons();
       $('.blocked-customer-top').hide();
-      setState('insert_bills_hcm2');
+      setState('insert_bills_recycler');
       break;
     case 'acceptingBill':
       setAccepting(true);
@@ -397,8 +405,8 @@ function processData(data) {
       suspiciousAddress(data.blacklistMessage);
       setState('suspicious_address');
       break;
-    case 'hcm2Continue':
-      setState('hcm2_continue');
+    case 'actionRequiredMaintenance':
+      setState('action_required_maintenance');
       break;
     default:
       if (data.action) setState(window.snakecase(data.action));
@@ -473,10 +481,12 @@ function customInfoRequest(customInfoRequest) {
     case 'text':
       $('#custom-requirement-text-label1').text(customInfoRequest.input.label1);
       $('#custom-requirement-text-label2').text(customInfoRequest.input.label2);
+      $('#custom-requirement-text-label3').text(customInfoRequest.input.label3);
       $('#previous-text-requirement').hide();
       $('#submit-text-requirement').hide();
       $('#next-text-requirement').hide();
       $('#optional-text-field-2').hide();
+      $('#optional-text-field-3').hide();
       $('.key.backspace.standard-backspace-key').removeClass('backspace-margin-left-override');
       $('.custom-info-request-space-key').show();
       // set type of constraint and buttons where that constraint should apply to disable/ enable
@@ -485,7 +495,15 @@ function customInfoRequest(customInfoRequest) {
         $('#optional-text-field-2').show();
         $('.key.backspace.standard-backspace-key').addClass('backspace-margin-left-override');
         $('.custom-info-request-space-key').hide();
-        customRequirementTextKeyboard.setConstraint(customInfoRequest.input.constraintType, ['#next-text-requirement']);
+
+        if (!!customInfoRequest.input.label3) {
+          $('#optional-text-field-3').show();
+          customRequirementTextKeyboard.setConstraint('spaceSeparationThreeFields', ['#next-text-requirement']);
+          customRequirementTextKeyboardNumberOfBoxes = 3;
+        } else {
+          customRequirementTextKeyboard.setConstraint('spaceSeparation', ['#next-text-requirement']);
+          customRequirementTextKeyboardNumberOfBoxes = 2;
+        }
       }
       setState('custom_permission_screen2_text');
       setScreen('custom_permission_screen2_text');
@@ -729,7 +747,7 @@ $(document).ready(function () {
 
   customRequirementTextKeyboard = new Keyboard({
     id: 'custom-requirement-text-keyboard',
-    inputBox: '.text-input-field-1',
+    inputBox: 1,
     submitButtonWrapper: '.submit-text-requirement-button-wrapper',
     setComplianceTimeout: setComplianceTimeout
   }).init(function () {
@@ -787,7 +805,6 @@ $(document).ready(function () {
     buttonPressed('wifiConnect', { pass: pass, ssid: ssid, rawSsid: rawSsid });
   });
 
-  var hcm2Continue = document.getElementById('hcm2-continue');
   var sendCoinsButton = document.getElementById('send-coins');
   var sendCoinsButton2 = document.getElementById('send-only-send-coins');
   touchEvent(sendCoinsButton, function () {
@@ -800,14 +817,9 @@ $(document).ready(function () {
     buttonPressed('sendCoins');
   });
 
-  touchEvent(sendCoinsButton2, function () {
-    setState('sending_coins');
-    buttonPressed('sendCoins');
-  });
-
-  touchEvent(hcm2Continue, function () {
-    buttonPressed('hcm2Continue');
-  });
+  setupButton('recycler-continue-start', 'recyclerContinue');
+  setupButton('recycler-continue', 'recyclerContinue');
+  setupButton('recycler-finish', 'sendCoins');
 
   var blockedCustomerOk = document.getElementById('blocked-customer-ok');
   touchEvent(blockedCustomerOk, function () {
@@ -815,6 +827,12 @@ $(document).ready(function () {
   });
   var insertBillCancelButton = document.getElementById('insertBillCancel');
   touchImmediateEvent(insertBillCancelButton, null, function () {
+    setBuyerAddress(null);
+    buttonPressed('cancelInsertBill');
+  });
+
+  var insertBillCancelRecyclerButton = document.getElementById('insertBillCancelRecycler');
+  touchImmediateEvent(insertBillCancelRecyclerButton, function () {
     setBuyerAddress(null);
     buttonPressed('cancelInsertBill');
   });
@@ -832,6 +850,7 @@ $(document).ready(function () {
   setupButton('printer-scan-again', 'printerScanAgain');
 
   setupButton('insert-first-bill-promo-button', 'insertPromoCode');
+  setupButton('insert-first-recycler-bills-promo-button', 'insertPromoCode');
   setupButton('choose-fiat-promo-button', 'insertPromoCode');
 
   var promoCodeCancelButton = document.getElementById('promo-code-cancel');
@@ -852,28 +871,49 @@ $(document).ready(function () {
   var previousFieldTextRequirementButton = document.getElementById('previous-text-requirement');
   touchEvent(submitTextRequirementButton, function () {
     customRequirementTextKeyboard.deactivate.bind(customRequirementTextKeyboard);
-    var text = $('.text-input-field-1').data('content') + ' ' + ($('.text-input-field-2').data('content') || '');
+    var text1 = $('.text-input-field-1').data('content');
+    var text2 = $('.text-input-field-2').data('content') || '';
+    var text3 = $('.text-input-field-3').data('content') || '';
+    var text = [text1, text2, text3].filter(function (t) {
+      return t != '';
+    }).join(' ');
     buttonPressed('customInfoRequestSubmit', text);
     $('.text-input-field-1').removeClass('faded').data('content', '').val('');
     $('.text-input-field-2').addClass('faded').data('content', '').val('');
-    customRequirementTextKeyboard.setInputBox('.text-input-field-1');
+    $('.text-input-field-3').addClass('faded').data('content', '').val('');
+    customRequirementTextKeyboard.setInputBox(1);
   });
   touchEvent(nextFieldTextRequirementButton, function () {
-    $('.text-input-field-1').addClass('faded');
-    $('.text-input-field-2').removeClass('faded');
-    $('#next-text-requirement').hide();
+    var fieldState = customRequirementTextKeyboard.getInputBox();
+    var finalState = customRequirementTextKeyboardNumberOfBoxes;
+
+    $('.text-input-field-' + fieldState).addClass('faded');
     $('#previous-text-requirement').show();
-    $('#submit-text-requirement').show();
-    // changing input box changes buttons where validation works on
-    customRequirementTextKeyboard.setInputBox('.text-input-field-2', ['#submit-text-requirement']);
+
+    fieldState = fieldState == finalState ? fieldState : fieldState + 1;
+
+    $('.text-input-field-' + fieldState).removeClass('faded');
+    customRequirementTextKeyboard.setInputBox(fieldState, ['#submit-text-requirement']);
+
+    if (fieldState === finalState) {
+      $('#next-text-requirement').hide();
+    }
   });
   touchEvent(previousFieldTextRequirementButton, function () {
-    $('.text-input-field-1').removeClass('faded');
-    $('.text-input-field-2').addClass('faded');
+    var fieldState = customRequirementTextKeyboard.getInputBox();
+
+    $('.text-input-field-' + fieldState).addClass('faded');
     $('#next-text-requirement').show();
-    $('#previous-text-requirement').hide();
-    $('#submit-text-requirement').hide();
-    customRequirementTextKeyboard.setInputBox('.text-input-field-1', ['#next-text-requirement']);
+
+    fieldState = fieldState == 1 ? 1 : fieldState - 1;
+
+    $('.text-input-field-' + fieldState).removeClass('faded');
+
+    customRequirementTextKeyboard.setInputBox(fieldState, ['#next-text-requirement']);
+
+    if (fieldState === 1) {
+      $('#previous-text-requirement').hide();
+    }
   });
 
   setupButton('submit-promo-code', 'submitPromoCode', {
@@ -944,6 +984,8 @@ $(document).ready(function () {
 
   setupImmediateButton('rates-close', 'idle');
   setupButton('rates-section-button', 'ratesScreen');
+
+  setupButton('maintenance_restart', 'maintenanceRestart');
 
   calculateAspectRatio();
 
@@ -1020,6 +1062,7 @@ $(document).ready(function () {
     customRequirementTextKeyboard.deactivate.bind(customRequirementTextKeyboard)();
     $('.text-input-field-1').removeClass('faded').data('content', '').val('');
     $('.text-input-field-2').addClass('faded').data('content', '').val('');
+    $('.text-input-field-3').addClass('faded').data('content', '').val('');
     customRequirementTextKeyboard.setInputBox('.text-input-field-1');
   });
 
@@ -1309,6 +1352,20 @@ function setCryptomatModel(model) {
     return body.removeClass(it);
   });
   $('body').addClass(model.startsWith('douro') ? 'douro' : model);
+}
+
+function enableRecyclerBillButtons() {
+  var continueButton = document.getElementById('recycler-continue');
+  var finishButton = document.getElementById('recycler-finish');
+  continueButton.disabled = false;
+  finishButton.disabled = false;
+}
+
+function disableRecyclerBillButtons() {
+  var continueButton = document.getElementById('recycler-continue');
+  var finishButton = document.getElementById('recycler-finish');
+  continueButton.disabled = true;
+  finishButton.disabled = true;
 }
 
 function setDirection(direction) {
@@ -1631,7 +1688,7 @@ function setCredit(credit, lastBill) {
 
   $('.js-processing-bill').html(inserted);
 
-  $('.js-send-crypto-disable').hide();
+  $('.js-continue-crypto-enable').show();
   $('.js-send-crypto-enable').show();
 }
 
@@ -1890,10 +1947,10 @@ function minimumTx(lowestBill) {
   window.setTimeout(revertScreen, 3000);
 }
 
-function readingBill(bill) {
+function readingBills(bill) {
   $('.js-processing-bill').html(translate('Processing %s ...', [formatFiat(bill)]));
+  $('.js-continue-crypto-enable').hide();
   $('.js-send-crypto-enable').hide();
-  $('.js-send-crypto-disable').show();
 }
 
 function sendOnly(reason) {
@@ -2195,9 +2252,11 @@ function shouldEnableTouch() {
 function setAvailablePromoCodes(areThereAvailablePromoCodes) {
   if (areThereAvailablePromoCodes) {
     $('#insert-first-bill-promo-button').show();
+    $('#insert-first-recycler-bills-promo-button').show();
     $('#choose-fiat-promo-button').show();
   } else {
     $('#insert-first-bill-promo-button').hide();
+    $('#insert-first-recycler-bills-promo-button').hide();
     $('#choose-fiat-promo-button').hide();
   }
 }
@@ -2205,22 +2264,28 @@ function setAvailablePromoCodes(areThereAvailablePromoCodes) {
 function setCurrentDiscount(currentDiscount, promoCodeApplied) {
   if (promoCodeApplied) {
     $('#insert-first-bill-promo-button').hide();
+    $('#insert-first-recycler-bills-promo-button').hide();
     $('#choose-fiat-promo-button').hide();
   }
 
   if (!currentDiscount) {
     $('#insert-first-bill-code-added').hide();
+    $('#insert-first-recycler-bills-code-added').hide();
     $('#choose-fiat-code-added').hide();
   } else if (currentDiscount > 0) {
     var successMessage = '✔ ' + translate('Discount added (%s off commissions)', [currentDiscount + '%']);
     $('#insert-first-bill-code-added').html(successMessage);
+    $('#insert-first-recycler-bills-code-added').html(successMessage);
     $('#choose-fiat-code-added').html(successMessage);
     $('#insert-first-bill-code-added').show();
+    $('#insert-first-recycler-bills-code-added').show();
     $('#choose-fiat-code-added').show();
   } else {
     $('#insert-first-bill-promo-button').show();
+    $('#insert-first-recycler-bills-promo-button').show();
     $('#choose-fiat-promo-button').show();
     $('#insert-first-bill-code-added').hide();
+    $('#insert-first-recycler-bills-code-added').hide();
     $('#choose-fiat-code-added').hide();
   }
 }
@@ -2303,13 +2368,13 @@ function thousandSeparator(number, country) {
   return numberFormatter.format(number);
 }
 
-function setRates(allRates, fiat, locales) {
+function setRates(allRates, fiat) {
   var ratesTable = $('.rates-content');
-  var tableHeader = $('<div class="xs-margin-bottom">\n  <h4 class="js-i18n">Buy</h4>\n  <h4 class="js-i18n">Crypto</h4>\n  <h4 class="js-i18n">Sell</h4>\n</div>');
+  var tableHeader = $('<div class="xs-margin-bottom">\n  <h4 class="js-i18n">' + translate('Buy') + '</h4>\n  <h4 class="js-i18n">' + translate('Crypto') + '</h4>\n  <h4 class="js-i18n">' + translate('Sell') + '</h4>\n</div>');
   var coinEntries = [];
 
   Object.keys(allRates).forEach(function (it) {
-    coinEntries.push($('<div class="xs-margin-bottom">\n    <p class="d2 js-i18n">' + thousandSeparator(BN(allRates[it].cashIn).toFixed(2), locales.country) + '</p>\n    <h4 class="js-i18n">' + it + '</h4>\n    <p class="d2 js-i18n">' + thousandSeparator(BN(allRates[it].cashOut).toFixed(2), locales.country) + '</p>\n  </div>'));
+    coinEntries.push($('<div class="xs-margin-bottom">\n    <p class="d2 js-i18n">' + thousandSeparator(BN(allRates[it].cashIn).toFixed(2), localeCode) + '</p>\n    <h4 class="js-i18n">' + it + '</h4>\n    <p class="d2 js-i18n">' + thousandSeparator(BN(allRates[it].cashOut).toFixed(2), localeCode) + '</p>\n  </div>'));
   });
 
   $('#rates-fiat-currency').text(fiat);

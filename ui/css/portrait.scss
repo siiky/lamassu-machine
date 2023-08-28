@@ -190,6 +190,14 @@ main {
   margin-left: 10vw;
 }
 
+.scan-image.only-gmuk1 {
+    margin-top: 5vh;
+}
+
+.scan-image.only-aveiro {
+    margin-top: 5vh;
+}
+
 .insert_bills_state {
   main {
     text-align: center;
@@ -205,6 +213,8 @@ main {
   }
 }
 
+.insert_bills_recycler_state,
+.insert_first_bills_recycler_state,
 .insert_more_bills_state {
   .primary-side {
     display: flex;
@@ -269,12 +279,21 @@ main {
     text-align: center;
   }
 
+  #insert-first-recycler-bills-promo-button,
   #insert-first-bill-promo-button {
     position: absolute;
     bottom: 10vh;
     left: calc(50vw);
     transform: translateX(-50%);
   }
+}
+
+.insert_bills_recycler_state .secondary-side {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20%;
 }
 
 .register_phone_state,
@@ -632,7 +651,9 @@ main {
       bottom: 5vh;
       left: calc(50vh - 50% - 6vh);
       margin: 0;
-
+    }
+    #choose-fiat-code-added {
+      margin: 1vh;
     }
   }
   #js-fiat-buttons {
