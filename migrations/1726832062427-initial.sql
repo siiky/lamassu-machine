@@ -1,15 +1,15 @@
 -- Up
 
-CREATE TABLE versions (
-  current INTEGER NOT NULL,
-  latest  INTEGER NOT NULL
+CREATE TABLE version (
+  latest INTEGER NOT NULL
 );
-INSERT INTO versions (current, latest) VALUES (0, 0);
 
-CREATE TABLE configs (
-  namespace TEXT NOT NULL,
-  version   INTEGER NOT NULL,
-  data      TEXT NOT NULL
+CREATE TABLE static_config (
+  version                  INTEGER PRIMARY KEY,
+  enable_paper_wallet_only BOOLEAN NOT NULL,
+  has_lightening           BOOLEAN NOT NULL,
+  server_version           TEXT NOT NULL,
+  two_way_mode             BOOLEAN NOT NULL
 );
 
 CREATE TABLE urls_to_ping (
@@ -23,8 +23,7 @@ CREATE TABLE speedtest_files (
 
 CREATE TABLE terms (
   version INTEGER NOT NULL,
-  hash    TEXT,
-  active INTEGER NOT NULL
+  hash    TEXT
 );
 
 CREATE TABLE terms_by_hash (
@@ -33,13 +32,13 @@ CREATE TABLE terms_by_hash (
   text    TEXT NOT NULL,
   accept  TEXT NOT NULL,
   cancel  TEXT NOT NULL,
-  tcphoto INTEGER NOT NULL,
-  delay   INTEGER NOT NULL
+  tcphoto BOOLEAN NOT NULL,
+  delay   BOOLEAN NOT NULL
 );
 
 CREATE TABLE triggers_automation (
   trigger_type TEXT PRIMARY KEY NOT NULL,
-  automatic    INTEGER NOT NULL
+  automatic    BOOLEAN NOT NULL
 );
 
 CREATE TABLE locale_info (
@@ -61,5 +60,5 @@ DROP TABLE terms_by_hash;
 DROP TABLE terms;
 DROP TABLE speedtest_files;
 DROP TABLE urls_to_ping;
-DROP TABLE configs;
-DROP TABLE versions;
+DROP TABLE static_config;
+DROP TABLE version;
