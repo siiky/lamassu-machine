@@ -42,8 +42,20 @@ CREATE TABLE triggers_automation (
   automatic    INTEGER NOT NULL
 );
 
+CREATE TABLE locale_info (
+  country        TEXT NOT NULL,
+  fiat_code      TEXT NOT NULL,
+  primary_locale TEXT NOT NULL
+);
+
+CREATE TABLE locales (
+  locale TEXT PRIMARY KEY NOT NULL
+);
+
 -- Down
 
+DROP TABLE locales;
+DROP TABLE locale_info;
 DROP TABLE triggers_automation;
 DROP TABLE terms_by_hash;
 DROP TABLE terms;
