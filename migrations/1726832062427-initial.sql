@@ -37,8 +37,14 @@ CREATE TABLE terms_by_hash (
   delay   INTEGER NOT NULL
 );
 
+CREATE TABLE triggers_automation (
+  trigger_type TEXT PRIMARY KEY NOT NULL,
+  automatic    INTEGER NOT NULL
+);
+
 -- Down
 
+DROP TABLE triggers_automation;
 DROP TABLE terms_by_hash;
 DROP TABLE terms;
 DROP TABLE speedtest_files;
