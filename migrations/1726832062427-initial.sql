@@ -12,6 +12,15 @@ CREATE TABLE configs (
   data      TEXT NOT NULL
 );
 
+CREATE TABLE urls_to_ping (
+  url TEXT NOT NULL
+);
+
+CREATE TABLE speedtest_files (
+  url  TEXT NOT NULL,
+  size INTEGER NOT NULL
+);
+
 CREATE TABLE terms (
   version INTEGER NOT NULL,
   hash    TEXT,
@@ -32,5 +41,7 @@ CREATE TABLE terms_by_hash (
 
 DROP TABLE terms_by_hash;
 DROP TABLE terms;
+DROP TABLE speedtest_files;
+DROP TABLE urls_to_ping;
 DROP TABLE configs;
 DROP TABLE versions;
