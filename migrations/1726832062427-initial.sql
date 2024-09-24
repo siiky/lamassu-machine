@@ -39,7 +39,7 @@ CREATE TABLE terms_by_hash (
 
 CREATE TABLE triggers_automation (
   trigger_type TEXT PRIMARY KEY NOT NULL,
-  automatic    BOOLEAN NOT NULL
+  automatic    TEXT CHECK(automatic IN ('Automatic', 'Manual')) NOT NULL
 );
 
 CREATE TABLE locales (
