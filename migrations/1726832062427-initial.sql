@@ -5,7 +5,10 @@ CREATE TABLE static_config (
   enable_paper_wallet_only BOOLEAN NOT NULL,
   has_lightening           BOOLEAN NOT NULL,
   server_version           TEXT NOT NULL,
+  timezone                 INTEGER NOT NULL,
   two_way_mode             BOOLEAN NOT NULL,
+  customer_authentication  TEXT CHECK(customer_authentication IN ('EMAIL', 'SMS')) NOT NULL,
+
   country                  TEXT NOT NULL,
   fiat_code                TEXT NOT NULL,
   primary_locale           TEXT NOT NULL
