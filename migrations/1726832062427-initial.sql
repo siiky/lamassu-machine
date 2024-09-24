@@ -1,15 +1,14 @@
 -- Up
 
-CREATE TABLE version (
-  latest INTEGER NOT NULL
-);
-
 CREATE TABLE static_config (
-  version                  INTEGER PRIMARY KEY,
+  version                  INTEGER PRIMARY KEY NOT NULL
   enable_paper_wallet_only BOOLEAN NOT NULL,
   has_lightening           BOOLEAN NOT NULL,
   server_version           TEXT NOT NULL,
-  two_way_mode             BOOLEAN NOT NULL
+  two_way_mode             BOOLEAN NOT NULL,
+  country                  TEXT NOT NULL,
+  fiat_code                TEXT NOT NULL,
+  primary_locale           TEXT NOT NULL
 );
 
 CREATE TABLE urls_to_ping (
@@ -22,12 +21,11 @@ CREATE TABLE speedtest_files (
 );
 
 CREATE TABLE terms (
-  version INTEGER NOT NULL,
-  hash    TEXT
+  hash TEXT
 );
 
 CREATE TABLE terms_by_hash (
-  hash    TEXT NOT NULL,
+  hash    TEXT PRIMARY KEY NOT NULL,
   title   TEXT NOT NULL,
   text    TEXT NOT NULL,
   accept  TEXT NOT NULL,
@@ -41,12 +39,6 @@ CREATE TABLE triggers_automation (
   automatic    BOOLEAN NOT NULL
 );
 
-CREATE TABLE locale_info (
-  country        TEXT NOT NULL,
-  fiat_code      TEXT NOT NULL,
-  primary_locale TEXT NOT NULL
-);
-
 CREATE TABLE locales (
   locale TEXT PRIMARY KEY NOT NULL
 );
@@ -54,7 +46,6 @@ CREATE TABLE locales (
 -- Down
 
 DROP TABLE locales;
-DROP TABLE locale_info;
 DROP TABLE triggers_automation;
 DROP TABLE terms_by_hash;
 DROP TABLE terms;
