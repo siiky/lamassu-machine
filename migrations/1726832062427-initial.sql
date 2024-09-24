@@ -46,6 +46,11 @@ CREATE TABLE locales (
   locale TEXT PRIMARY KEY NOT NULL
 );
 
+CREATE TABLE receipt_info (
+  field TEXT NOT NULL,
+  enabled BOOLEAN NOT NULL
+);
+
 -- Down
 
 DROP TABLE locales;
