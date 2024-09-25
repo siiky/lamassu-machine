@@ -9,9 +9,19 @@ CREATE TABLE static_config (
   two_way_mode             BOOLEAN NOT NULL,
   customer_authentication  TEXT CHECK(customer_authentication IN ('EMAIL', 'SMS')) NOT NULL,
 
+  -- LocaleInfo
   country                  TEXT NOT NULL,
   fiat_code                TEXT NOT NULL,
   primary_locale           TEXT NOT NULL
+
+  -- MachineInfo
+  device_name              TEXT NOT NULL,
+  number_of_cassettes      INTEGER NOT NULL,
+  number_of_recyclers      INTEGER NOT NULL,
+
+  -- ReceiptInfo
+  paper_receipt            BOOLEAN NOT NULL,
+  sms_receipt              BOOLEAN NOT NULL
 );
 
 CREATE TABLE urls_to_ping (
@@ -46,7 +56,15 @@ CREATE TABLE locales (
   locale TEXT PRIMARY KEY NOT NULL
 );
 
-CREATE TABLE receipt_info (
+CREATE TABLE operator_info (
+  name           TEXT NOT NULL,
+  phone          TEXT NOT NULL,
+  email          TEXT NOT NULL,
+  website        TEXT NOT NULL,
+  company_number TEXT NOT NULL,
+);
+
+CREATE TABLE receipt_options (
   field TEXT NOT NULL,
   enabled BOOLEAN NOT NULL
 );
