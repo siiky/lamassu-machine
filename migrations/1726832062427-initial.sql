@@ -83,6 +83,61 @@ CREATE TABLE receipt_options (
   enabled BOOLEAN NOT NULL
 );
 
+
+CREATE TABLE custom_input (
+  type TEXT NOT NULL,
+  contraint_type TEXT NOT NULL,
+  label1 TEXT,
+  label2 TEXT,
+);
+
+CREATE TABLE custom_input_choice_list (
+  custom_input INTEGER NOT NULL,
+  choice_text  TEXT NOT NULL,
+
+  FOREIGN KEY(custom_input) REFERENCES custom_input (rowid)
+);
+
+CREATE TABLE custom_screen (
+  text  TEXT NOT NULL,
+  title TEXT NOT NULL
+);
+
+CREATE TABLE custom_requests (
+  name    TEXT NOT NULL,
+  input   INTEGER NOT NULL,
+  screen1 INTEGER NOT NULL,
+  screen2 INTEGER NOT NULL,
+
+  FOREIGN KEY(input)   REFERENCES custom_input (rowid),
+  FOREIGN KEY(screen1) REFERENCES custom_screen (rowid),
+  FOREIGN KEY(screen2) REFERENCES custom_screen (rowid)
+);
+
+CREATE TABLE custom_info_requests (
+  id             TEXT PRIMARY KEY NOT NULL,
+  enabled        BOOLEAN NOT NULL,
+  custom_request INTEGER NOT NULL,
+
+  FOREIGN KEY(custom_request) REFERENCES custom_requests (rowid)
+);
+
+CREATE TABLE triggers (
+  id           TEXT PRIMARY KEY NOT NULL,
+  direction    TEXT NOT NULL,
+  requirement  TEXT NOT NULL,
+  trigger_type TEXT NOT NULL,
+
+  suspension_days        REAL,
+  threshold              INTEGER,
+  threshold_days         INTEGER,
+  custom_info_request_id TEXT, -- TODO: Is this the same as custom_info_requests.id ?
+  custom_info_request    TEXT,
+  external_service       TEXT,
+
+  FOREIGN KEY(custom_info_request) REFERENCES custom_info_requests (id)
+);
+
 -- Down
 
 DROP TABLE locales;
