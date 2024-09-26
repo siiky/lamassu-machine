@@ -56,6 +56,20 @@ CREATE TABLE locales (
   locale TEXT PRIMARY KEY NOT NULL
 );
 
+CREATE TABLE coins (
+  crypto_code         TEXT PRIMARY KEY NOT NULL,
+  crypto_code_display TEXT NOT NULL,
+  display             TEXT NOT NULL,
+  minimum_tx          TEXT NOT NULL,
+  cash_in_fee         TEXT NOT NULL,
+  cash_in_commission  TEXT NOT NULL,
+  cash_out_commission TEXT NOT NULL,
+  crypto_network      TEXT NOT NULL,
+  crypto_units        TEXT NOT NULL,
+  batchable           TEXT NOT NULL,
+  is_cash_in_only     TEXT NOT NULL,
+);
+
 CREATE TABLE operator_info (
   name           TEXT NOT NULL,
   phone          TEXT NOT NULL,
