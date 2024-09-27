@@ -1,7 +1,7 @@
 -- Up
 
 CREATE TABLE static_config (
-  version                  INTEGER PRIMARY KEY NOT NULL
+  version                  INTEGER PRIMARY KEY NOT NULL,
   enable_paper_wallet_only BOOLEAN NOT NULL,
   has_lightening           BOOLEAN NOT NULL,
   server_version           TEXT NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE static_config (
   -- LocaleInfo
   country                  TEXT NOT NULL,
   fiat_code                TEXT NOT NULL,
-  primary_locale           TEXT NOT NULL
+  primary_locale           TEXT NOT NULL,
 
   -- MachineInfo
   device_name              TEXT NOT NULL,
@@ -34,11 +34,7 @@ CREATE TABLE speedtest_files (
 );
 
 CREATE TABLE terms (
-  hash TEXT
-);
-
-CREATE TABLE terms_by_hash (
-  hash    TEXT PRIMARY KEY NOT NULL,
+  hash    TEXT,
   title   TEXT NOT NULL,
   text    TEXT NOT NULL,
   accept  TEXT NOT NULL,
@@ -48,7 +44,7 @@ CREATE TABLE terms_by_hash (
 );
 
 CREATE TABLE triggers_automation (
-  trigger_type TEXT PRIMARY KEY NOT NULL,
+  trigger_type    TEXT PRIMARY KEY NOT NULL,
   automatic    TEXT CHECK(automatic IN ('Automatic', 'Manual')) NOT NULL
 );
 
@@ -67,7 +63,7 @@ CREATE TABLE coins (
   crypto_network      TEXT NOT NULL,
   crypto_units        TEXT NOT NULL,
   batchable           TEXT NOT NULL,
-  is_cash_in_only     TEXT NOT NULL,
+  is_cash_in_only     TEXT NOT NULL
 );
 
 CREATE TABLE operator_info (
@@ -75,7 +71,7 @@ CREATE TABLE operator_info (
   phone          TEXT NOT NULL,
   email          TEXT NOT NULL,
   website        TEXT NOT NULL,
-  company_number TEXT NOT NULL,
+  company_number TEXT NOT NULL
 );
 
 CREATE TABLE receipt_options (
@@ -88,7 +84,7 @@ CREATE TABLE custom_input (
   type TEXT NOT NULL,
   contraint_type TEXT NOT NULL,
   label1 TEXT,
-  label2 TEXT,
+  label2 TEXT
 );
 
 CREATE TABLE custom_input_choice_list (
@@ -140,11 +136,18 @@ CREATE TABLE triggers (
 
 -- Down
 
+DROP TABLE triggers;
+DROP TABLE custom_info_requests;
+DROP TABLE custom_requests;
+DROP TABLE custom_screen;
+DROP TABLE custom_input_choice_list;
+DROP TABLE custom_input;
+DROP TABLE receipt_options;
+DROP TABLE operator_info;
+DROP TABLE coins;
 DROP TABLE locales;
 DROP TABLE triggers_automation;
-DROP TABLE terms_by_hash;
 DROP TABLE terms;
 DROP TABLE speedtest_files;
 DROP TABLE urls_to_ping;
 DROP TABLE static_config;
-DROP TABLE version;
