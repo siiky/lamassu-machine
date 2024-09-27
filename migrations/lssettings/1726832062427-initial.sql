@@ -119,10 +119,10 @@ CREATE TABLE custom_info_requests (
 );
 
 CREATE TABLE triggers (
-  id           TEXT PRIMARY KEY NOT NULL,
-  direction    TEXT NOT NULL,
-  requirement  TEXT NOT NULL,
-  trigger_type TEXT NOT NULL,
+  id                     TEXT PRIMARY KEY NOT NULL,
+  direction              TEXT NOT NULL,
+  requirement            TEXT NOT NULL,
+  trigger_type           TEXT NOT NULL,
 
   suspension_days        REAL,
   threshold              INTEGER,
