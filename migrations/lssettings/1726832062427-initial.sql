@@ -45,7 +45,7 @@ CREATE TABLE terms (
 
 CREATE TABLE triggers_automation (
   trigger_type    TEXT PRIMARY KEY NOT NULL,
-  automatic    TEXT CHECK(automatic IN ('Automatic', 'Manual')) NOT NULL
+  automation_type TEXT CHECK(automation_type IN ('Automatic', 'Manual')) NOT NULL
 );
 
 CREATE TABLE locales (
