@@ -1,7 +1,7 @@
 -- Up
 
 CREATE TABLE static_config (
-  version                  INTEGER PRIMARY KEY NOT NULL,
+  version                  INTEGER NOT NULL,
   enable_paper_wallet_only BOOLEAN NOT NULL,
   has_lightening           BOOLEAN NOT NULL,
   server_version           TEXT NOT NULL,
