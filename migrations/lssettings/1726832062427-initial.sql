@@ -127,7 +127,6 @@ CREATE TABLE triggers (
   suspension_days        REAL,
   threshold              INTEGER,
   threshold_days         INTEGER,
-  custom_info_request_id TEXT, -- TODO: Is this the same as custom_info_requests.id ?
   custom_info_request    TEXT,
   external_service       TEXT,
 
