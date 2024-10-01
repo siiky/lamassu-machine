@@ -80,9 +80,9 @@ CREATE TABLE receipt_options (
 );
 
 
-CREATE TABLE custom_input (
+CREATE TABLE custom_inputs (
   type TEXT NOT NULL,
-  contraint_type TEXT NOT NULL,
+  constraint_type TEXT NOT NULL,
   label1 TEXT,
   label2 TEXT
 );
@@ -91,7 +91,7 @@ CREATE TABLE custom_input_choice_list (
   custom_input INTEGER NOT NULL,
   choice_text  TEXT NOT NULL,
 
-  FOREIGN KEY(custom_input) REFERENCES custom_input (rowid)
+  FOREIGN KEY(custom_input) REFERENCES custom_inputs (rowid)
 );
 
 CREATE TABLE custom_screen (
@@ -105,7 +105,7 @@ CREATE TABLE custom_requests (
   screen1 INTEGER NOT NULL,
   screen2 INTEGER NOT NULL,
 
-  FOREIGN KEY(input)   REFERENCES custom_input (rowid),
+  FOREIGN KEY(input)   REFERENCES custom_inputs (rowid),
   FOREIGN KEY(screen1) REFERENCES custom_screen (rowid),
   FOREIGN KEY(screen2) REFERENCES custom_screen (rowid)
 );
@@ -141,7 +141,7 @@ DROP TABLE custom_info_requests;
 DROP TABLE custom_requests;
 DROP TABLE custom_screen;
 DROP TABLE custom_input_choice_list;
-DROP TABLE custom_input;
+DROP TABLE custom_inputs;
 DROP TABLE receipt_options;
 DROP TABLE operator_info;
 DROP TABLE coins;
