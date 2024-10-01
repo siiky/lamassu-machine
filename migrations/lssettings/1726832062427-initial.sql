@@ -127,10 +127,10 @@ CREATE TABLE triggers (
   suspension_days        REAL,
   threshold              INTEGER,
   threshold_days         INTEGER,
-  custom_info_request    TEXT,
+  custom_info_request    INTEGER,
   external_service       TEXT,
 
-  FOREIGN KEY(custom_info_request) REFERENCES custom_info_requests (id)
+  FOREIGN KEY(custom_info_request) REFERENCES custom_info_requests (rowid)
 );
 
 -- Down
