@@ -34,7 +34,7 @@ CREATE TABLE speedtest_files (
 );
 
 CREATE TABLE terms (
-  hash    TEXT,
+  hash    TEXT PRIMARY KEY NOT NULL,
   title   TEXT NOT NULL,
   text    TEXT NOT NULL,
   accept  TEXT NOT NULL,
