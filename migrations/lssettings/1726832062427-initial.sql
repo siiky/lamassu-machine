@@ -39,6 +39,7 @@ CREATE TABLE terms (
   text    TEXT NOT NULL,
   accept  TEXT NOT NULL,
   cancel  TEXT NOT NULL,
+  active  BOOLEAN NOT NULL,
   tcphoto BOOLEAN NOT NULL,
   delay   BOOLEAN NOT NULL
 );
